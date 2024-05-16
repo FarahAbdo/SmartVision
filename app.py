@@ -153,6 +153,6 @@ if __name__ == "__main__":
 
 
 # Add your name as the developer
-st.markdown("### Developed by Farah Abdou")
+# st.markdown("### Developed by Farah Abdou")
 
 
