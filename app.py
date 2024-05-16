@@ -126,13 +126,47 @@
 # if st.button("Start Camera"):
 #     run_inference(mode)
 
-
 import streamlit as st
 import cv2
 import numpy as np
+from streamlit_webrtc import VideoTransformerBase, webrtc_streamer
 from ultralytics import YOLO
 from sort import Sort  # Ensure this is the local sort.py file
 from yolo_segmentation import YOLOSegmentation
+
+# Load models and setup initial configurations
+faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+yolo_model_det = YOLO("yolov8n.pt")
+yolo_model_seg = YOLOSegmentation("yolov8n-seg.pt")
+yolo_model_pose = YOLO("yolov8n-pose.pt")
+tracker = Sort()
+
+class VideoTransformer(VideoTransformerBase):
+    def __init__(self, mode="Object Detection"):
+        self.mode = mode
+        self.i = 0
+        self.kpt_color = np.array([[255, 128, 0], [255, 153, 51], [255, 178, 102], [230, 230, 0], [255, 153, 255],
+                                   [153, 204, 255], [255, 102, 255], [255, 51, 255], [102, 178, 255], [51, 153, 255],
+                                   [255, 153, 153], [255, 102, 102], [255, 51, 51], [153, 255, 153], [102, 255, 102],
+                                   [51, 255, 51], [0, 255, 0], [0, 0, 255], [255, 0, 0], [255, 255, 255]], dtype=np.uint8)
+        self.skeleton = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13], [6, 12], [7, 13], [6, 7], [6, 8], [7, 9],
+                         [8, 10], [9, 11], [2, 3], [1, 2], [1, 3], [2, 4], [3, 5], [4, 6], [5, 7]]
+        self.limb_color = self.kpt_color[[9, 9, 9, 9, 7, 7, 7, 0, 0, 0, 0, 0, 16, 16, 16, 16, 16, 16, 16]]
+
+    def set_mode(self, mode):
+        self.mode = mode
+
+    def transform(self, frame):
+        img = frame.to_ndarray(format="bgr24")
+
+        if self.mode == "Object Detection":
+            img = detect_objects(img, yolo_model_det, tracker)
+        elif self.mode == "Object Segmentation":
+            img = seg_objects(img, yolo_model_seg)
+        elif self.mode == "Pose Estimation":
+            img = pos_objects(img, yolo_model_pose, self.kpt_color, self.skeleton, self.limb_color)
+
+        return img
 
 def detect_objects(webcam_img, model, tracker):
     results = model(webcam_img)
@@ -203,62 +237,19 @@ def pos_objects(webcam_img, model, kpt_color, skeleton, limb_color):
                              thickness=2, lineType=cv2.LINE_AA)
     return webcam_img
 
-def run_inference(mode, device_index=0):
-    if mode == 'Object Detection':
-        model = YOLO("yolov8n.pt")
-        tracker = Sort()
-        process_frame = lambda frame: detect_objects(frame, model, tracker)
-    elif mode == 'Object Segmentation':
-        model = YOLOSegmentation("yolov8n-seg.pt")
-        process_frame = lambda frame: seg_objects(frame, model)
-    elif mode == 'Pose Estimation':
-        palette = np.array([[255, 128, 0], [255, 153, 51], [255, 178, 102], [230, 230, 0], [255, 153, 255],
-                            [153, 204, 255], [255, 102, 255], [255, 51, 255], [102, 178, 255], [51, 153, 255],
-                            [255, 153, 153], [255, 102, 102], [255, 51, 51], [153, 255, 153], [102, 255, 102],
-                            [51, 255, 51], [0, 255, 0], [0, 0, 255], [255, 0, 0], [255, 255, 255]],
-                           dtype=np.uint8)
-        skeleton = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13], [6, 12], [7, 13], [6, 7], [6, 8], [7, 9],
-                    [8, 10], [9, 11], [2, 3], [1, 2], [1, 3], [2, 4], [3, 5], [4, 6], [5, 7]]
-        kpt_color = palette[[16, 16, 16, 16, 16, 0, 0, 0, 0, 0, 0, 9, 9, 9, 9, 9, 9]]
-        limb_color = palette[[9, 9, 9, 9, 7, 7, 7, 0, 0, 0, 0, 0, 16, 16, 16, 16, 16, 16, 16]]
-        model = YOLO("yolov8n-pose.pt")
-        process_frame = lambda frame: pos_objects(frame, model, kpt_color, skeleton, limb_color)
-
-    cap = cv2.VideoCapture(device_index)
-    
-    if not cap.isOpened():
-        st.error(f"Error: Could not open video device with index {device_index}.")
-        return
-
-    stframe = st.empty()
-    stop = st.button("Stop Camera")
-
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if not ret:
-            st.write("Error: Could not read frame.")
-            break
-
-        frame = process_frame(frame)
-        stframe.image(frame, channels="BGR")
-
-        if stop:
-            break
-
-    cap.release()
-
 # Streamlit interface
 st.title("Smart Vision")
 mode = st.selectbox("Choose a mode:", ["Object Detection", "Object Segmentation", "Pose Estimation"])
 
-# Let the user choose the camera device index
-device_index = st.number_input("Enter Camera Device Index", min_value=0, max_value=10, value=0, step=1)
+# Set up the video transformer with the selected mode
+video_transformer = VideoTransformer(mode=mode)
 
-if st.button("Start Camera"):
-    run_inference(mode, device_index)
+# Start the webcam stream with the appropriate transformer
+webrtc_streamer(key="example", video_transformer_factory=lambda: video_transformer)
 
 # Add your name as the developer
 st.markdown("### Developed by Farah Abdou")
+
 
 
 
