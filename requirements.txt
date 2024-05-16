@@ -1,8 +1,9 @@
 streamlit
 streamlit-webrtc
-opencv-python-headless
+pillow
 numpy
 ultralytics
 filterpy
-
+sort
+yolo-segmentation
 
