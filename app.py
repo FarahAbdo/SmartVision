@@ -1,4 +1,3 @@
-
 import streamlit as st
 import cv2
 import numpy as np
@@ -118,12 +117,11 @@ def run_inference(mode):
 
 # Streamlit interface
 st.title("Smart Vision (YOLOv8 Inference)")
+st.sidebar.markdown("### Developed by Farah Abdou")
 mode = st.selectbox("Choose a mode:", ["Object Detection", "Object Segmentation", "Pose Estimation"])
 
 if st.button("Start Camera"):
     run_inference(mode)
 
-
-st.markdown("### Developed by Farah Abdou")
 
 
