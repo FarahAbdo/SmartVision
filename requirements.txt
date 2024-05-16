@@ -7,3 +7,4 @@ filterpy
 sort
 yolo-segmentation
 
+git+https://github.com/abewley/sort.git
