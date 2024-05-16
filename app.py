@@ -137,7 +137,6 @@ from sort import Sort  # Ensure this is the local sort.py file
 from yolo_segmentation import YOLOSegmentation
 
 # Load models and setup initial configurations
-faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 yolo_model_det = YOLO("yolov8n.pt")
 yolo_model_seg = YOLOSegmentation("yolov8n-seg.pt")
 yolo_model_pose = YOLO("yolov8n-pose.pt")
@@ -146,7 +145,6 @@ tracker = Sort()
 class VideoTransformer(VideoTransformerBase):
     def __init__(self, mode="Object Detection"):
         self.mode = mode
-        self.i = 0
         self.kpt_color = np.array([[255, 128, 0], [255, 153, 51], [255, 178, 102], [230, 230, 0], [255, 153, 255],
                                    [153, 204, 255], [255, 102, 255], [255, 51, 255], [102, 178, 255], [51, 153, 255],
                                    [255, 153, 153], [255, 102, 102], [255, 51, 51], [153, 255, 153], [102, 255, 102],
@@ -247,9 +245,14 @@ mode = st.selectbox("Choose a mode:", ["Object Detection", "Object Segmentation"
 video_transformer = VideoTransformer(mode=mode)
 
 # Start the webcam stream with the appropriate transformer
-webrtc_streamer(key="example", video_transformer_factory=lambda: video_transformer)
+ctx = webrtc_streamer(key="example", video_transformer_factory=lambda: video_transformer)
+
+# Stop camera button
+if st.button("Stop Camera"):
+    ctx.stop()
 
 # Add your name as the developer
 st.markdown("### Developed by Farah Abdou")
+
 
 
