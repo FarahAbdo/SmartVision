@@ -125,6 +125,9 @@
 
 # if st.button("Start Camera"):
 #     run_inference(mode)
+
+
+
 import streamlit as st
 import cv2
 import numpy as np
@@ -224,7 +227,7 @@ def pos_objects(webcam_img, model, kpt_color, skeleton, limb_color):
                     if kpt.shape[-1] == 3:
                         conf1 = kpt[(sk[0] - 1), 2]
                         conf2 = kpt[(sk[1] - 1), 2]
-                        if conf1 < 0.5 or conf2 < 0.5):
+                        if conf1 < 0.5 or conf2 < 0.5:
                             continue
                     if pos1[0] % webcam_img.shape[1] == 0 or pos1[1] % webcam_img.shape[0] == 0 or pos1[0] < 0 or pos1[1] < 0:
                         continue
@@ -248,6 +251,5 @@ webrtc_streamer(key="example", video_transformer_factory=lambda: video_transform
 
 # Add your name as the developer
 st.markdown("### Developed by Farah Abdou")
-
 
 
