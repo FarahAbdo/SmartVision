@@ -97,9 +97,13 @@ def run_inference(mode):
         process_frame = lambda frame: pos_objects(frame, model, kpt_color, skeleton, limb_color)
 
     cap = cv2.VideoCapture(0)
-    stop = st.button("Stop Camera")
+    
+    if not cap.isOpened():
+        st.error("Error: Could not open video device.")
+        return
 
     stframe = st.empty()
+    stop = st.button("Stop Camera")
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -116,7 +120,7 @@ def run_inference(mode):
     cap.release()
 
 # Streamlit interface
-st.title("Smart Vision (YOLOv8 Inference)")
+st.title("Smart Vision")
 mode = st.selectbox("Choose a mode:", ["Object Detection", "Object Segmentation", "Pose Estimation"])
 
 if st.button("Start Camera"):
