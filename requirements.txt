@@ -3,5 +3,4 @@ streamlit-webrtc
 pillow
 numpy
 ultralytics
-filterpy
-yolo-segmentation
+filterpy==1.4.5
