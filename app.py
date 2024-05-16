@@ -125,7 +125,6 @@
 
 # if st.button("Start Camera"):
 #     run_inference(mode)
-
 import streamlit as st
 import cv2
 import numpy as np
