@@ -8,6 +8,7 @@ from streamlit_webrtc import webrtc_streamer
 import ultralytics
 import filterpy
 
+
 # Function definitions (same as in YOLOv8_all.py)
 def detect_objects(webcam_img, model, tracker):
     results = model(np.array(webcam_img))
