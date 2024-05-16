@@ -127,7 +127,6 @@
 #     run_inference(mode)
 
 
-
 import streamlit as st
 import cv2
 import numpy as np
@@ -249,10 +248,7 @@ ctx = webrtc_streamer(key="example", video_transformer_factory=lambda: video_tra
 
 # Stop camera button
 if st.button("Stop Camera"):
-    ctx.stop()
+    ctx.state.playing = False
 
 # Add your name as the developer
 st.markdown("### Developed by Farah Abdou")
-
-
-
