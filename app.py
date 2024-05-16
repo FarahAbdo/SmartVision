@@ -125,6 +125,8 @@
 
 # if st.button("Start Camera"):
 #     run_inference(mode)
+
+
 import streamlit as st
 import cv2
 import numpy as np
@@ -244,7 +246,11 @@ video_transformer = VideoTransformer(mode=mode)
 # Start the webcam stream with the appropriate transformer
 ctx = webrtc_streamer(key="example", video_transformer_factory=lambda: video_transformer)
 
+# Stop camera button
+if st.button("Stop Camera"):
+    ctx.state.playing = False
 
 # Add your name as the developer
 st.markdown("### Developed by Farah Abdou")
+
 
