@@ -126,6 +126,7 @@
 # if st.button("Start Camera"):
 #     run_inference(mode)
 
+
 import streamlit as st
 import cv2
 import numpy as np
@@ -133,7 +134,6 @@ from ultralytics import YOLO
 from sort import Sort  # Ensure this is the local sort.py file
 from yolo_segmentation import YOLOSegmentation
 
-# Function definitions (same as in YOLOv8_all.py)
 def detect_objects(webcam_img, model, tracker):
     results = model(webcam_img)
     result = results[0]
