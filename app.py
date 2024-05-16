@@ -1,8 +1,9 @@
+
 import streamlit as st
 import cv2
 import numpy as np
 from ultralytics import YOLO
-from sort import Sort  # Ensure this is the local sort.py file
+from sort import Sort
 from yolo_segmentation import YOLOSegmentation
 
 # Function definitions (same as in YOLOv8_all.py)
@@ -97,13 +98,9 @@ def run_inference(mode):
         process_frame = lambda frame: pos_objects(frame, model, kpt_color, skeleton, limb_color)
 
     cap = cv2.VideoCapture(0)
-    
-    if not cap.isOpened():
-        st.error("Error: Could not open video device.")
-        return
+    stop = st.button("Stop Camera")
 
     stframe = st.empty()
-    stop = st.button("Stop Camera")
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -127,7 +124,6 @@ if st.button("Start Camera"):
     run_inference(mode)
 
 
-# Add your name as the developer
 st.markdown("### Developed by Farah Abdou")
 
 
