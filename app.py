@@ -126,7 +126,6 @@
 # if st.button("Start Camera"):
 #     run_inference(mode)
 
-
 import streamlit as st
 import cv2
 import numpy as np
@@ -252,3 +251,4 @@ if st.button("Stop Camera"):
 
 # Add your name as the developer
 st.markdown("### Developed by Farah Abdou")
+
