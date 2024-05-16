@@ -260,7 +260,5 @@ if st.button("Start Camera"):
 # Add your name as the developer
 st.markdown("### Developed by Farah Abdou")
 
-# Add your name as the developer
-# st.markdown("### Developed by Farah Abdou")
 
 
