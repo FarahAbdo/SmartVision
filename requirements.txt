@@ -4,3 +4,4 @@ pillow
 numpy
 ultralytics
 filterpy==1.4.5
+opencv-python-headless
