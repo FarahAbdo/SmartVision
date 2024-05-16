@@ -116,7 +116,7 @@ def run_inference(mode):
     cap.release()
 
 # Streamlit interface
-st.title("Smart Vision")
+st.title("Smart Vision (YOLOv8 Inference)")
 mode = st.selectbox("Choose a mode:", ["Object Detection", "Object Segmentation", "Pose Estimation"])
 
 if st.button("Start Camera"):
